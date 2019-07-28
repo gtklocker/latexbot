@@ -34,9 +34,6 @@ def checkout_commit_clean(repo, commit)
     git
 end
 
-def save_pdf(url, commit, path)
-end
-
 def build(url, commit)
     base = "burn"
     hash = hash_url url
@@ -51,4 +48,4 @@ def build(url, commit)
     end
 end
 
-puts build "https://github.com/gtklocker/burn-paper", "5d95b8604b2ff7c0e3e94ed8aa8b36e055a598e6"
+#puts build "https://github.com/gtklocker/burn-paper", "5d95b8604b2ff7c0e3e94ed8aa8b36e055a598e6"

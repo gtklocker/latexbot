@@ -7,6 +7,9 @@ require 'jwt'         # Authenticates a GitHub App
 require 'time'        # Gets ISO 8601 representation of a Time object
 require 'logger'      # Logs debug statements
 
+require './artifact_store'
+require './build'
+
 set :port, 8080
 set :bind, '0.0.0.0'
 
@@ -23,11 +26,17 @@ class GHAapp < Sinatra::Application
   # The GitHub App's identifier (type integer) set when registering an app.
   APP_IDENTIFIER = ENV['GITHUB_APP_IDENTIFIER']
 
+  STORE_LOCATION = ENV['STORE_LOCATION']
+
   # Turn on Sinatra's verbose logging during development
   configure :development do
     set :logging, Logger::DEBUG
   end
 
+  def initialize(app=nil)
+    super(app)
+    @artifact_store = ArtifactStore.new STORE_LOCATION
+  end
 
   # Executed before each request to the `/event_handler` route
   before '/event_handler' do
@@ -51,15 +60,31 @@ class GHAapp < Sinatra::Application
     200 # success status
   end
 
+  get '/artifacts/:username/:reponame/:commit.pdf' do
+    begin
+      File.read(@artifact_store.fetch(params[:username], params[:reponame], params[:commit]))
+    rescue
+      404
+    end
+  end
+
 
   helpers do
     # When a PR is opened, add a comment
     def handle_pr_opened_event(payload)
       logger.debug ">>>>> commenting"
       repo = payload['repository']['full_name']
+      username, reponame = repo.split('/', 2)
       pr_number = payload['pull_request']['number']
       sha = payload['pull_request']['head']['sha']
-      @installation_client.add_comment(repo, pr_number, "Building the paper from #{repo}##{sha}...")
+
+      begin
+        pdf = build "https://github.com/#{repo}", sha
+        @artifact_store.store(username, reponame, sha, pdf)
+        @installation_client.add_comment(repo, pr_number, "Building the paper from #{repo}##{sha} succeeded. https://vaco.serveo.net/artifacts/#{username}/#{reponame}/#{commit}.pdf")
+      rescue StandardError => e
+        @installation_client.add_comment(repo, pr_number, "Building the paper from #{repo}##{sha} failed with error:\n\n#{e.message}")
+      end
     end
 
     # Saves the raw payload and converts the payload to JSON format
