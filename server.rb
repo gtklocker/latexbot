@@ -42,10 +42,6 @@ class GHAapp < Sinatra::Application
   post '/event_handler' do
 
     case request.env['HTTP_X_GITHUB_EVENT']
-    when 'issues'
-      if @payload['action'] === 'opened'
-        handle_issue_opened_event(@payload)
-      end
     when 'pull_request'
       if %w(opened closed reopened).include? @payload['action']
         handle_pr_opened_event(@payload)
@@ -57,14 +53,6 @@ class GHAapp < Sinatra::Application
 
 
   helpers do
-
-    # When an issue is opened, add a label
-    def handle_issue_opened_event(payload)
-      repo = payload['repository']['full_name']
-      issue_number = payload['issue']['number']
-      @installation_client.add_labels_to_an_issue(repo, issue_number, ['needs-response'])
-    end
-
     # When a PR is opened, add a comment
     def handle_pr_opened_event(payload)
       logger.debug ">>>>> commenting"
