@@ -79,7 +79,9 @@ class GHAapp < Sinatra::Application
       sha = payload['pull_request']['head']['sha']
 
       begin
-        pdf = build "https://github.com/#{repo}", sha
+        url = clone_url username, reponame, @installation_token
+        logger.debug ">>>>>> #{url}"
+        pdf = build url, sha
         @artifact_store.store(username, reponame, sha, pdf)
         @installation_client.add_comment(repo, pr_number, "Building the paper from #{repo}##{sha} succeeded. https://vaco.serveo.net/artifacts/#{username}/#{reponame}/#{commit}.pdf")
       rescue StandardError => e
