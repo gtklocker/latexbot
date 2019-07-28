@@ -62,7 +62,7 @@ class GHAapp < Sinatra::Application
 
   get '/artifacts/:username/:reponame/:commit.pdf' do
     begin
-      File.read(@artifact_store.fetch(params[:username], params[:reponame], params[:commit]))
+      send_file(@artifact_store.fetch(params[:username], params[:reponame], params[:commit]))
     rescue
       404
     end
