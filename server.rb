@@ -83,7 +83,7 @@ class GHAapp < Sinatra::Application
         logger.debug ">>>>>> #{url}"
         pdf = build url, sha
         @artifact_store.store(username, reponame, sha, pdf)
-        @installation_client.add_comment(repo, pr_number, "Building the paper from #{repo}##{sha} succeeded. https://vaco.serveo.net/artifacts/#{username}/#{reponame}/#{commit}.pdf")
+        @installation_client.add_comment(repo, pr_number, "Building the paper from #{repo}##{sha} succeeded. https://vaco.serveo.net/artifacts/#{username}/#{reponame}/#{sha}.pdf")
       rescue StandardError => e
         @installation_client.add_comment(repo, pr_number, "Building the paper from #{repo}##{sha} failed with error:\n\n#{e.message}")
       end
