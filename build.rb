@@ -39,7 +39,7 @@ def build(url, commit)
     hash = hash_url url
     local_repo = clone_location.join hash
     if !local_repo.exist?
-        raise 'unimplemented'
+        Git.clone(url, local_repo)
     end
     checkout_commit_clean local_repo, commit
     Dir.chdir local_repo do
