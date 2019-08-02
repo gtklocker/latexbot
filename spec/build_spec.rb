@@ -2,7 +2,7 @@ require_relative 'spec_helper'
 
 require_relative '../build'
 
-FIXTURE_REPO_URL = File.expand_path(File.join(File.dirname(__FILE__), '..', 'fixtures', 'latex-git-repo'))
+FIXTURE_REPO_URL = 'https://github.com/gtklocker/latexbot-fixture.git'
 FIXTURE_SUCCEEDING_COMMIT = '4c893fb6570e1958ed2535f680b6c65f330686ca'
 FIXTURE_FAILING_COMMIT = '8342149fa696beecbca36ce7429633afabb60fb5'
 
