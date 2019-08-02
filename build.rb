@@ -13,7 +13,7 @@ def clone_location
 end
 
 def build_pdf(base)
-    successful_build = system("latexmk", "-pdf", "#{base}")
+    successful_build = system("latexmk", "-halt-on-error", "-pdf", "#{base}")
     if successful_build
         artifact = Pathname.new "#{base}.pdf"
         if artifact.exist?
