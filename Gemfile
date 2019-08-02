@@ -11,3 +11,7 @@ group :development do
     gem 'ruby-debug-ide'
     gem 'solargraph'
 end
+
+group :test do
+  gem "rspec"
+end
