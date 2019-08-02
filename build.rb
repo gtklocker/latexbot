@@ -35,7 +35,7 @@ def checkout_commit_clean(repo, commit)
 end
 
 def build(url, commit)
-    base = "burn"
+    base = "main"
     hash = hash_url url
     local_repo = clone_location.join hash
     if !local_repo.exist?
